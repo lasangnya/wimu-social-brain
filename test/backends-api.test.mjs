@@ -32,6 +32,13 @@ test('referencePreamble only mentions references when there are some', () => {
   assert.match(referencePreamble(2), /style references for the mascot character.*Landscape 16:9\. $/);
 });
 
+test('referencePreamble follows the requested aspect and rejects an unknown one', () => {
+  assert.equal(referencePreamble(0, '1:1'), 'Square 1:1. ');
+  assert.equal(referencePreamble(0, '4:5'), 'Portrait 4:5. ');
+  assert.match(referencePreamble(1, '9:16'), /style references.*Vertical 9:16\. $/);
+  assert.throws(() => referencePreamble(0, '3:2'), /not supported/);
+});
+
 test('fetchWithTimeout rejects with a timeout message when the fetch never settles', async () => {
   const never = (url, init) => new Promise((_, rej) => init.signal.addEventListener('abort', () => rej(new Error('aborted'))));
   await assert.rejects(fetchWithTimeout(never, 'https://x', {}, 20), /timeout after 0s/);
@@ -61,6 +68,15 @@ test('gemini generate posts text + inlineData refs, asks for a 16:9 IMAGE, and w
   assert.match(body.contents[0].parts[0].text, /style references.*Landscape 16:9.*blob doing taxes/s);
   assert.equal(body.contents[0].parts[1].inlineData.mimeType, 'image/png');
   assert.deepEqual(body.generationConfig, { responseModalities: ['IMAGE'], imageConfig: { aspectRatio: '16:9' } });
+});
+
+test('gemini generate asks for the requested aspect', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'smh-gem-'));
+  const fetch = fakeFetch(200, { candidates: [{ content: { parts: [{ inlineData: { mimeType: 'image/png', data: PNG_1x1.toString('base64') } }] } }] });
+  await gemini.generate({ prompt: 'blob', refs: [], out: join(dir, '01.png'), cwd: dir, model: 'gemini-3.1-flash-image', aspect: '4:5', env: { GEMINI_API_KEY: 'k' }, fetch });
+  const body = JSON.parse(fetch.calls[0].init.body);
+  assert.equal(body.generationConfig.imageConfig.aspectRatio, '4:5');
+  assert.match(body.contents[0].parts[0].text, /^Portrait 4:5\. blob$/);
 });
 
 test('gemini generate reports a rejected key with the env var name', async () => {
@@ -120,6 +136,15 @@ test('openai generate without refs posts JSON to images/generations', async () =
   assert.match(body.prompt, /^Landscape 16:9\. blob$/);
 });
 
+test('openai generate maps the aspect to a supported size', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'smh-oai-'));
+  const fetch = fakeFetch(200, { data: [{ b64_json: PNG_1x1.toString('base64') }] });
+  await openai.generate({ prompt: 'blob', refs: [], out: join(dir, '01.png'), cwd: dir, model: 'gpt-image-2', quality: 'low', aspect: '1:1', env: { OPENAI_API_KEY: 'sk' }, fetch });
+  const body = JSON.parse(fetch.calls[0].init.body);
+  assert.equal(body.size, '1024x1024');
+  assert.match(body.prompt, /^Square 1:1\. blob$/);
+});
+
 test('openai generate maps a 401 to a key hint and a timeout to a timeout message', async () => {
   const dir = mkdtempSync(join(tmpdir(), 'smh-oai-'));
   const bad = await openai.generate({ prompt: 'x', refs: [], out: join(dir, '01.png'), cwd: dir, model: 'gpt-image-2', quality: 'medium', env: { OPENAI_API_KEY: 'sk' }, fetch: fakeFetch(401, 'invalid api key') });
@@ -149,6 +174,14 @@ test('openrouter generate posts JSON to /api/v1/images with data-URL references 
   assert.equal(body.n, 1);
   assert.match(body.prompt, /style references.*Landscape 16:9.*blob/s);
   assert.deepEqual(body.input_references, [{ type: 'image_url', image_url: { url: `data:image/png;base64,${PNG_1x1.toString('base64')}` } }]);
+});
+
+test('openrouter generate sends the requested aspect_ratio', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'smh-or-'));
+  const fetch = fakeFetch(200, { data: [{ b64_json: PNG_1x1.toString('base64') }] });
+  await openrouter.generate({ prompt: 'blob', refs: [], out: join(dir, '01.png'), cwd: dir, model: 'google/gemini-3.1-flash-image', aspect: '1:1', env: { OPENROUTER_API_KEY: 'or' }, fetch });
+  const body = JSON.parse(fetch.calls[0].init.body);
+  assert.equal(body.aspect_ratio, '1:1');
 });
 
 test('openrouter generate omits input_references when there are no refs and maps a 401 to a key hint', async () => {
