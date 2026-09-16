@@ -248,11 +248,11 @@ test('backend.mjs CLI detect prints codex or manual note', () => {
   assert.match(out, /^backend: (codex \d+\.\d+\.\d+ \(ChatGPT subscription\)|manual \(codex (not found|found but)[^\n]*)\n$/);
 });
 
-// Helper: run the generate CLI in a temp cwd carrying the given show-me-how.md, returning parsed JSON.
+// Helper: run the generate CLI in a temp cwd carrying the given wimu-social-brain.md, returning parsed JSON.
 // execFileSync throws on a non-zero exit, so reaching the JSON.parse at all proves exit code 0.
 function runGenerate(designMd, envOverride = {}) {
   const dir = mkdtempSync(join(tmpdir(), 'smh-cli-'));
-  writeFileSync(join(dir, 'show-me-how.md'), designMd);
+  writeFileSync(join(dir, 'wimu-social-brain.md'), designMd);
   const promptFile = join(dir, 'p.txt');
   writeFileSync(promptFile, 'a deadpan blob doing taxes');
   const out = join(dir, 'raw', '01.png');
@@ -284,7 +284,7 @@ test('backend.mjs CLI generate reports a bad codex_reasoning as ok:false and sti
 
 test('backend.mjs CLI generate writes a prompt file and exits 0 when pinned to manual', () => {
   const dir = mkdtempSync(join(tmpdir(), 'smh-cli-'));
-  writeFileSync(join(dir, 'show-me-how.md'), '## Output\nbackend: manual\n');
+  writeFileSync(join(dir, 'wimu-social-brain.md'), '## Output\nbackend: manual\n');
   const promptFile = join(dir, 'p.txt');
   writeFileSync(promptFile, 'a deadpan blob doing taxes');
   const out = join(dir, 'raw', '01.png');
@@ -321,7 +321,7 @@ test('manual generate resumes when the image already exists, without rewriting t
 // Pointing -C at the repo root would let a drawing run touch any file in the user's repo, so the
 // sandbox is scoped to the shot's own output folder instead. `cwd` still spawns from the repo.
 test('buildCodexArgs sandboxes codex to the output folder, not the repo root', () => {
-  const out = resolve('/w/docs/show-me-how/topic/raw/01.png');
+  const out = resolve('/w/docs/wimu-social-brain/topic/raw/01.png');
   const args = buildCodexArgs({ prompt: 'p', out, cwd: resolve('/w') });
   assert.equal(args[1], '-C');
   assert.equal(args[2], dirname(out));
@@ -353,7 +353,7 @@ test('auto: nothing available lists what each candidate needs and points at /ini
   assert.match(r.note, /codex not found/);
   assert.match(r.note, /GEMINI_API_KEY not set/);
   assert.match(r.note, /OPENAI_API_KEY not set/);
-  assert.match(r.note, /\/show-me-how:init/);
+  assert.match(r.note, /\/wimu-social-brain:init/);
 });
 
 test('pinned API backend without its key throws naming the variable', () => {

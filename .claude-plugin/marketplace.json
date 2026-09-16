@@ -1,28 +1,29 @@
 {
-  "name": "show-me-how",
+  "name": "wimu-social-brain",
   "owner": {
     "name": "Shahriar Bijoy"
   },
   "metadata": {
-    "description": "Explain code, features and PRs with mascot-illustrated plain-language docs."
+    "description": "Turn a brand guide and a topic into on-brand social media posts for Instagram and LinkedIn."
   },
   "plugins": [
     {
-      "name": "show-me-how",
+      "name": "wimu-social-brain",
       "source": "./",
-      "description": "Explain code, features and PRs with mascot-illustrated plain-language docs. Hand-drawn style, your brand, your font.",
+      "description": "Turn a brand guide and a topic into on-brand social media posts — images and captions for Instagram and LinkedIn. Your colors, your font, your style.",
       "version": "0.6.0",
       "author": {
         "name": "Shahriar Bijoy"
       },
-      "homepage": "https://github.com/ShahriarBijoy/show-me-how",
-      "repository": "https://github.com/ShahriarBijoy/show-me-how",
+      "homepage": "https://github.com/lasangnya/wimu-social-brain",
+      "repository": "https://github.com/lasangnya/wimu-social-brain",
       "license": "MIT",
       "keywords": [
-        "illustration",
-        "documentation",
-        "mascot",
-        "explainer",
+        "social-media",
+        "instagram",
+        "linkedin",
+        "content",
+        "brand",
         "codex"
       ]
     }

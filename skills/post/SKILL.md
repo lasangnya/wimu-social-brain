@@ -4,7 +4,7 @@ description: Generate an on-brand social media post kit for Instagram and/or Lin
 disable-model-invocation: true
 ---
 
-# /show-me-how:post $ARGUMENTS
+# /wimu-social-brain:post $ARGUMENTS
 
 Parse `$ARGUMENTS`: PLATFORM = a trailing `instagram`, `linkedin` or `both` (default `both`); TOPIC = the rest. If TOPIC is empty, ask the user for a topic and stop — do not guess one.
 
@@ -20,12 +20,12 @@ Never post to any social platform, never run `git commit` or `git add`, never ed
 
 Before any script call below: if `$PLUGIN/node_modules/sharp` is missing, run `npm install --silent` with cwd `$PLUGIN` first.
 
-1. `node "$PLUGIN/scripts/design.mjs" "REPO"` -> JSON (`file`, `mascot`, `font`, `colors`, `tone`, `output.docs`, `output.backend`, `output.imageFormat`). `EXT` = `output.imageFormat` (`webp` by default; `png` if the user set it). If `file` is `null`, say once: "No show-me-how.md found; using Flow + Caveat defaults. Run /show-me-how:init to customize."
-2. Read `REPO/brand.md`. If it is missing, stop and tell the user: "No brand.md found — run /show-me-how:brand-init first. Posts are never written without a brand." Never invent a brand from the topic.
-3. `node "$PLUGIN/scripts/backend.mjs" detect --cwd "REPO"` -> prints `backend: ...`. Echo that line to the user verbatim; it already carries the install / login hints, so do not add advice of your own. If the line contains `running inside the Codex sandbox`, that is expected inside Codex: continue, and draw with the native image tool in step 3(a). If the command errors instead of printing `backend:`, show the error, ask the user to fix it or set `backend: auto` in show-me-how.md, then stop.
+1. `node "$PLUGIN/scripts/design.mjs" "REPO"` -> JSON (`file`, `mascot`, `font`, `colors`, `tone`, `output.docs`, `output.backend`, `output.imageFormat`). `EXT` = `output.imageFormat` (`webp` by default; `png` if the user set it). If `file` is `null`, say once: "No wimu-social-brain.md found; using Flow + Caveat defaults. Run /wimu-social-brain:init to customize."
+2. Read `REPO/brand.md`. If it is missing, stop and tell the user: "No brand.md found — run /wimu-social-brain:brand-init first. Posts are never written without a brand." Never invent a brand from the topic.
+3. `node "$PLUGIN/scripts/backend.mjs" detect --cwd "REPO"` -> prints `backend: ...`. Echo that line to the user verbatim; it already carries the install / login hints, so do not add advice of your own. If the line contains `running inside the Codex sandbox`, that is expected inside Codex: continue, and draw with the native image tool in step 3(a). If the command errors instead of printing `backend:`, show the error, ask the user to fix it or set `backend: auto` in wimu-social-brain.md, then stop.
 4. `node "$PLUGIN/scripts/slug.mjs" "<TOPIC>"` -> `SLUG`.
-   - `DIR` = `<design.output.docs>` joined with `SLUG` with exactly one `/` between them (e.g. `docs/show-me-how/spring-launch`).
-   - `SCRATCH` = `REPO/.show-me-how/SLUG`. Create `DIR` and `SCRATCH` (`mkdir -p`).
+   - `DIR` = `<design.output.docs>` joined with `SLUG` with exactly one `/` between them (e.g. `docs/wimu-social-brain/spring-launch`).
+   - `SCRATCH` = `REPO/.wimu-social-brain/SLUG`. Create `DIR` and `SCRATCH` (`mkdir -p`).
 5. Platforms and numbers: `instagram` = aspect `4:5` (1080x1350), `linkedin` = aspect `1:1` (1080x1080). With `both`, instagram is `NN=01` and linkedin `NN=02`; a single platform is `NN=01`.
 6. Style refs: the `style references:` list under `## Visual style` in brand.md (repo-root-relative paths). Drop any path that does not exist; if none exist, pass no `--ref` at all — the brand look still comes from the prompt text.
 
@@ -80,7 +80,7 @@ Handle each result as its shell exits; do not wait for all of them before starti
    ```json
    { "labels": [{ "text": "", "x": 0.0, "y": 0.0, "kind": "black" }] }
    ```
-   `x`/`y` are 0-1 fractions of width/height; the canvas is 1080x1350 (instagram) or 1080x1080 (linkedin) and a label is centred on its `x`/`y`, so keep every centre within x 0.12-0.88 and y 0.08-0.94. The headline is one large `black` label (`"size": 1.6`) placed in the empty zone the prompt reserved; an optional baked CTA is one smaller `flow` label below it. Max 3 labels, no arrows. `kind`: `black` (the headline), `flow` (CTA), `warn` (the one number or warning), `note` (side info). Omit `colors`/`font` — the script fills them from show-me-how.md.
+   `x`/`y` are 0-1 fractions of width/height; the canvas is 1080x1350 (instagram) or 1080x1080 (linkedin) and a label is centred on its `x`/`y`, so keep every centre within x 0.12-0.88 and y 0.08-0.94. The headline is one large `black` label (`"size": 1.6`) placed in the empty zone the prompt reserved; an optional baked CTA is one smaller `flow` label below it. Max 3 labels, no arrows. `kind`: `black` (the headline), `flow` (CTA), `warn` (the one number or warning), `note` (side info). Omit `colors`/`font` — the script fills them from wimu-social-brain.md.
 2. Overlay:
    ```
    node "$PLUGIN/scripts/label.mjs" --in "SCRATCH/NN.png" --labels "SCRATCH/NN.labels.json" --out "DIR/NN-<platform>.EXT" --design-cwd "REPO"
@@ -99,9 +99,9 @@ Only after every platform is either finished or pending. Write into `DIR`:
    ```json
    [{ "platform": "instagram", "aspect": "4:5", "image": "01-instagram.webp", "headline": "...", "caption": "...full caption, hashtags included...", "hashtags": ["#brand", "#topic"], "cta": "...", "altText": "..." }]
    ```
-   `image` is relative to `DIR`. `altText` follows `references/caption-guide.md`. For a pending platform, set `image` to the repo-root-relative scratch path (`.show-me-how/SLUG/NN.png`).
-4. If **no** platform is pending: delete `SCRATCH` (only `REPO/.show-me-how/SLUG`, never `.show-me-how` itself). If deleting fails, say so in one line and continue. If any platform is pending, keep `SCRATCH` and say it is kept for the re-run.
+   `image` is relative to `DIR`. `altText` follows `references/caption-guide.md`. For a pending platform, set `image` to the repo-root-relative scratch path (`.wimu-social-brain/SLUG/NN.png`).
+4. If **no** platform is pending: delete `SCRATCH` (only `REPO/.wimu-social-brain/SLUG`, never `.wimu-social-brain` itself). If deleting fails, say so in one line and continue. If any platform is pending, keep `SCRATCH` and say it is kept for the re-run.
 
 ## 6. Report
 
-Print exactly: the platform(s) produced, each image path and the `captions.md` and `posts.json` paths, which backend was used (`image_gen (native)` for step 3(a)), and which platforms are pending with each one's prompt file — or "none pending". Then suggest, without editing anything: "Add `.show-me-how/` to your `.gitignore` to keep prompts and unbaked generations out of the repo." Never post, never commit.
+Print exactly: the platform(s) produced, each image path and the `captions.md` and `posts.json` paths, which backend was used (`image_gen (native)` for step 3(a)), and which platforms are pending with each one's prompt file — or "none pending". Then suggest, without editing anything: "Add `.wimu-social-brain/` to your `.gitignore` to keep prompts and unbaked generations out of the repo." Never post, never commit.

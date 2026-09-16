@@ -8,7 +8,7 @@ import { parseDesign, loadDesign, findDesignFile, DESIGN_FILE, DEFAULTS } from '
 const fx = (n) => readFileSync(new URL(`./fixtures/${n}`, import.meta.url), 'utf8');
 
 test('template parses to defaults', () => {
-  const d = parseDesign(readFileSync(new URL('../templates/show-me-how.md', import.meta.url), 'utf8'));
+  const d = parseDesign(readFileSync(new URL('../templates/wimu-social-brain.md', import.meta.url), 'utf8'));
   assert.deepEqual(d, DEFAULTS);
 });
 
@@ -63,16 +63,16 @@ test('loadDesign returns defaults when file is missing', () => {
   assert.deepEqual(loadDesign(dir), DEFAULTS);
 });
 
-test('loadDesign reads show-me-how.md from cwd', () => {
+test('loadDesign reads wimu-social-brain.md from cwd', () => {
   const dir = mkdtempSync(join(tmpdir(), 'smh-'));
   writeFileSync(join(dir, DESIGN_FILE), '## Mascot\nname: Zed\n');
   assert.equal(loadDesign(dir).mascot.name, 'Zed');
   assert.equal(findDesignFile(dir), join(dir, DESIGN_FILE));
 });
 
-test('loadDesign still reads a legacy design.md that carries the show-me-how marker', () => {
+test('loadDesign still reads a legacy design.md that carries the wimu-social-brain marker', () => {
   const dir = mkdtempSync(join(tmpdir(), 'smh-'));
-  writeFileSync(join(dir, 'design.md'), '# show-me-how design\n## Mascot\nname: Zed\n');
+  writeFileSync(join(dir, 'design.md'), '# wimu-social-brain design\n## Mascot\nname: Zed\n');
   assert.equal(loadDesign(dir).mascot.name, 'Zed');
   assert.equal(findDesignFile(dir), join(dir, 'design.md'));
 });
@@ -84,9 +84,9 @@ test('loadDesign ignores a foreign design.md (no marker), even one that would no
   assert.equal(findDesignFile(dir), null);
 });
 
-test('show-me-how.md wins over a marked legacy design.md', () => {
+test('wimu-social-brain.md wins over a marked legacy design.md', () => {
   const dir = mkdtempSync(join(tmpdir(), 'smh-'));
-  writeFileSync(join(dir, 'design.md'), '# show-me-how design\n## Mascot\nname: Old\n');
+  writeFileSync(join(dir, 'design.md'), '# wimu-social-brain design\n## Mascot\nname: Old\n');
   writeFileSync(join(dir, DESIGN_FILE), '## Mascot\nname: New\n');
   assert.equal(loadDesign(dir).mascot.name, 'New');
 });

@@ -107,7 +107,7 @@ export function codexProblems({ version, loggedIn }) {
 // task-10-report.md) turns on the real `image_gen` tool plus `view_image`.
 const ENABLE_IMAGE_TOOL = ['--enable', 'image_generation'];
 
-// codex accepts exactly these four. A typo in show-me-how.md would otherwise reach codex as an opaque
+// codex accepts exactly these four. A typo in wimu-social-brain.md would otherwise reach codex as an opaque
 // config error mid-run, after the user has already waited on a generation, so reject it up front.
 const REASONING_EFFORTS = ['minimal', 'low', 'medium', 'high'];
 
@@ -126,7 +126,7 @@ export function buildCodexArgs({ prompt, refs = [], out, cwd, codexModel = '', c
   if (codexModel) args.push('-m', codexModel);
   const effort = codexReasoning || 'low';
   if (!REASONING_EFFORTS.includes(effort)) {
-    throw new Error(`show-me-how.md: codex_reasoning "${effort}" is not a codex reasoning effort. Use ${REASONING_EFFORTS.join(' | ')}`);
+    throw new Error(`wimu-social-brain.md: codex_reasoning "${effort}" is not a codex reasoning effort. Use ${REASONING_EFFORTS.join(' | ')}`);
   }
   // Also terminates the greedy `-i <FILE>...` list above, so the instruction below stays positional.
   args.push('-c', `model_reasoning_effort=${effort}`);

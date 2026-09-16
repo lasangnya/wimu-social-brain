@@ -1,6 +1,6 @@
 # Platform formats
 
-Compact specs for the two platforms `/show-me-how:post` supports. 9:16 Stories/Reels (1080x1920) is a future format — out of scope for now.
+Compact specs for the two platforms `/wimu-social-brain:post` supports. 9:16 Stories/Reels (1080x1920) is a future format — out of scope for now.
 
 | | Instagram feed | LinkedIn |
 |---|---|---|

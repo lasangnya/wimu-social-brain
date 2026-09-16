@@ -8,7 +8,7 @@ import { loadDesign } from './lib/design.mjs';
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const DEFAULT_FONT = join(HERE, '..', 'assets', 'fonts', 'Caveat-Regular.ttf');
 
-// show-me-how.md `labels:` is either a family name (rendered from the bundled Caveat file unless the
+// wimu-social-brain.md `labels:` is either a family name (rendered from the bundled Caveat file unless the
 // family is installed) or a .ttf/.otf path relative to the repo root.
 export function resolveFontPath(design, cwd = process.cwd()) {
   const f = design.font.labels;
@@ -59,7 +59,7 @@ export function fontFamilyFromFile(fontPath) {
 }
 
 // The family Pango should be asked for: what the font file says it is, when `font` refers to a
-// file (or is the bundled default); otherwise the family name as written in show-me-how.md.
+// file (or is the bundled default); otherwise the family name as written in wimu-social-brain.md.
 export function labelFamily(font, fontPath) {
   const isFile = !font || font === 'in-image' || /\.(ttf|otf)$/i.test(font);
   return (isFile && fontFamilyFromFile(fontPath)) || fontFamily(font);
@@ -221,7 +221,7 @@ async function renderCaptionPng(text, width, height, spec, fontPath) {
   return { buf, width: meta.width, height: meta.height };
 }
 
-// Picks the encoder from the extension of `out`. `quality` is show-me-how.md image_quality (1-100).
+// Picks the encoder from the extension of `out`. `quality` is wimu-social-brain.md image_quality (1-100).
 function encode(pipeline, out, quality) {
   const ext = extname(out).toLowerCase();
   if (ext === '.webp') return pipeline.webp({ quality });

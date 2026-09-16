@@ -1,10 +1,10 @@
 ---
 name: brand-init
-description: Set up the brand guide for social posts — interviews you once and writes brand.md (positioning, voice, offerings, CTAs, hashtags, visual style, style reference images) at the repo root. Run before /show-me-how:post.
+description: Set up the brand guide for social posts — interviews you once and writes brand.md (positioning, voice, offerings, CTAs, hashtags, visual style, style reference images) at the repo root. Run before /wimu-social-brain:post.
 disable-model-invocation: true
 ---
 
-# /show-me-how:brand-init
+# /wimu-social-brain:brand-init
 
 `REPO` = absolute path of the git root (`git rev-parse --show-toplevel`). Run every command from there.
 
@@ -42,5 +42,5 @@ Copy `$PLUGIN/templates/brand.md` to `REPO/brand.md` and edit in the answered fi
 Print exactly: the `brand.md` path, one line reminding the user that style reference images must live inside the repo, and the next command:
 
 ```
-/show-me-how:post <topic> [instagram|linkedin|both]
+/wimu-social-brain:post <topic> [instagram|linkedin|both]
 ```

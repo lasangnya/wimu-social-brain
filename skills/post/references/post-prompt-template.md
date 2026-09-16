@@ -9,7 +9,7 @@ Brand style: {the "look" prose from brand.md ## Visual style — colors, line qu
 
 Brand voice: {the voice adjectives from brand.md}. The image should feel the way the brand sounds.
 
-Recurring character (only when show-me-how.md defines one): {mascot.name}: {mascot.description}. Never: {mascot.never}. {mascot.name} must PERFORM the post's idea, not stand beside it.
+Recurring character (only when wimu-social-brain.md defines one): {mascot.name}: {mascot.description}. Never: {mascot.never}. {mascot.name} must PERFORM the post's idea, not stand beside it.
 
 Focal idea: {the ONE visual idea of this post, one sentence}.
 Scene: {what is physically happening; 1-2 low-tech objects; the single action that carries the idea}.

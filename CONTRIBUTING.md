@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in show-me-how. Issues and pull requests are welcome.
+Thanks for your interest in wimu-social-brain. Issues and pull requests are welcome.
 
 ## How the project is run
 

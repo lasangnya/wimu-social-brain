@@ -42,17 +42,17 @@ export const MODELS = {
 };
 
 // '' means the backend's default model. Unknown ids are rejected here, at detect time, so a typo
-// in show-me-how.md fails before the user has waited on a generation.
+// in wimu-social-brain.md fails before the user has waited on a generation.
 export function resolveModel(backend, imageModel = '') {
   const list = MODELS[backend];
   if (!list) return '';
   if (!imageModel) return list.find((m) => m.default).id;
   if (backend === 'openrouter') {
-    if (!/^[\w.-]+\/[\w.:-]+$/.test(imageModel)) throw new Error(`show-me-how.md: image_model "${imageModel}" is not an openrouter model id (expected vendor/model, e.g. ${list.map((m) => m.id).slice(0, 2).join(' | ')})`);
+    if (!/^[\w.-]+\/[\w.:-]+$/.test(imageModel)) throw new Error(`wimu-social-brain.md: image_model "${imageModel}" is not an openrouter model id (expected vendor/model, e.g. ${list.map((m) => m.id).slice(0, 2).join(' | ')})`);
     return imageModel;
   }
   if (!list.some((m) => m.id === imageModel)) {
-    throw new Error(`show-me-how.md: image_model "${imageModel}" is not a ${backend} model. Use ${list.map((m) => m.id).join(' | ')}`);
+    throw new Error(`wimu-social-brain.md: image_model "${imageModel}" is not a ${backend} model. Use ${list.map((m) => m.id).join(' | ')}`);
   }
   return imageModel;
 }
@@ -79,7 +79,7 @@ function known(name) { return name === 'auto' || name in BACKENDS; }
 
 export function detectBackend({ pinned = 'auto', model = '', quality = 'medium', env = process.env, which = codex.defaultWhich, probe = codex.defaultProbe } = {}) {
   if (!known(pinned)) throw new Error(`Unknown backend "${pinned}". Use auto | ${Object.keys(BACKENDS).join(' | ')}`);
-  if (pinned === 'manual') return { name: 'manual', note: 'manual (pinned in show-me-how.md)' };
+  if (pinned === 'manual') return { name: 'manual', note: 'manual (pinned in wimu-social-brain.md)' };
   const finish = (name, d) => {
     if (!(name in MODELS)) return { name, note: d.note };
     const id = resolveModel(name, model);
@@ -91,8 +91,8 @@ export function detectBackend({ pinned = 'auto', model = '', quality = 'medium',
     // config or environment. Inside the Codex sandbox there is nothing to fix -- the harness itself
     // hides codex -- and the skill can still draw with the harness's native image tool, so report
     // the same sandbox note the auto path prints and let the run continue.
-    if (!d.ready && d.sandboxed) return { name: 'manual', note: `manual (codex pinned in show-me-how.md, but ${d.note}). Run /show-me-how:init to set up automatic images.` };
-    if (!d.ready) throw new Error(`show-me-how.md pins backend: ${pinned} but ${d.problems.join('; ')}`);
+    if (!d.ready && d.sandboxed) return { name: 'manual', note: `manual (codex pinned in wimu-social-brain.md, but ${d.note}). Run /wimu-social-brain:init to set up automatic images.` };
+    if (!d.ready) throw new Error(`wimu-social-brain.md pins backend: ${pinned} but ${d.problems.join('; ')}`);
     return finish(pinned, d);
   }
   const reasons = [];
@@ -101,7 +101,7 @@ export function detectBackend({ pinned = 'auto', model = '', quality = 'medium',
     if (d.ready) return finish(name, d);
     reasons.push(d.note);
   }
-  return { name: 'manual', note: `manual (${reasons.join('; ')}). Run /show-me-how:init to set up automatic images.` };
+  return { name: 'manual', note: `manual (${reasons.join('; ')}). Run /wimu-social-brain:init to set up automatic images.` };
 }
 
 export async function generate({ backend, prompt, refs = [], out, cwd = process.cwd(), aspect, run, codexModel = '', codexReasoning = 'low', imageModel = '', imageApiQuality = 'medium', env = process.env, fetch }) {

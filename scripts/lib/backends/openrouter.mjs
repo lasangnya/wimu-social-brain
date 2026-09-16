@@ -24,7 +24,7 @@ export function buildOpenRouterRequest({ prompt, parts, model, apiKey, aspect = 
     url: ENDPOINT,
     init: {
       method: 'POST',
-      headers: { Authorization: `Bearer ${apiKey}`, 'content-type': 'application/json', 'HTTP-Referer': 'https://github.com/ShahriarBijoy/show-me-how', 'X-Title': 'show-me-how' },
+      headers: { Authorization: `Bearer ${apiKey}`, 'content-type': 'application/json', 'HTTP-Referer': 'https://github.com/lasangnya/wimu-social-brain', 'X-Title': 'wimu-social-brain' },
       body: JSON.stringify(body),
     },
   };

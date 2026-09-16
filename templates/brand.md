@@ -1,7 +1,7 @@
 # Brand guide
 # This file is READ BY THE AI AS PROSE. It is NOT parsed by scripts/design.mjs --
-# machine config (mascot, font, colors, output folder, backend) lives in show-me-how.md.
-# Edit it once; /show-me-how:post reads it on every run. Keep the section headings.
+# machine config (mascot, font, colors, output folder, backend) lives in wimu-social-brain.md.
+# Edit it once; /wimu-social-brain:post reads it on every run. Keep the section headings.
 # Comments start with #. Delete nothing you might want later -- comment it out.
 
 ## Positioning

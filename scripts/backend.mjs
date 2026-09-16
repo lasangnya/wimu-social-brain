@@ -19,7 +19,7 @@ if (cmd === 'detect') {
   console.log(`backend: ${b.note}`);
 } else if (cmd === 'generate') {
   // backends.md promises callers "generate always exits 0; read success from the JSON `ok` field".
-  // A bad show-me-how.md (unknown backend, unsupported codex_reasoning) throws before generate() can
+  // A bad wimu-social-brain.md (unknown backend, unsupported codex_reasoning) throws before generate() can
   // return, which would break that contract and strand the skill with an unparseable crash. Report
   // the failure in the same JSON shape instead. `detect` deliberately keeps throwing -- SKILL.md
   // handles that path and a caller needs the loud failure there.
