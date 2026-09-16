@@ -7,7 +7,7 @@
 [![Tests](https://img.shields.io/badge/tests-node%3Atest-informational.svg)](test)
 [![Image backends](https://img.shields.io/badge/backends-codex%20%7C%20gemini--api%20%7C%20openai--api%20%7C%20openrouter%20%7C%20manual-lightgrey.svg)](skills/illustrate/references/backends.md)
 
-A Claude Code plugin that explains code, features and PRs as short mascot comics instead of walls of text. This README is one.
+A Claude Code plugin that explains code, features and PRs as short mascot comics instead of walls of text — and turns your brand into on-brand social posts. This README is one.
 
 ![example](examples/hero.png)
 
@@ -74,6 +74,32 @@ Needs Node >=20.9; `sharp` installs itself on first run. From a clone: `git clon
 | `/show-me-how:explain <topic>` | Explains a feature or concept as a storybook, in chat and on disk. | `/show-me-how:explain label overlay` |
 | `/show-me-how:write-doc [path\|folder\|topic]` | Writes the storybook to `docs/show-me-how/<topic>/`. | `/show-me-how:write-doc scripts/` |
 | `/show-me-how:pr-review [pr\|url]` | Draws what a PR does. Never posts or commits. | `/show-me-how:pr-review 412` |
+| `/show-me-how:brand-init` | Interviews you once and writes `brand.md`, the brand guide posts are written from. | `/show-me-how:brand-init` |
+| `/show-me-how:post <topic> [instagram\|linkedin\|both]` | Writes an on-brand post kit (image + caption per platform). Never posts. | `/show-me-how:post spring launch both` |
+
+## Social posts
+
+Same engine, a different job: instead of a storybook, `/show-me-how:post` writes an on-brand social post for Instagram and/or LinkedIn.
+
+Two files drive it, both edited once:
+
+- **`brand.md`** (run `/show-me-how:brand-init`) — the brand as prose: positioning, audience, voice with example lines, offerings, proof points, CTAs, hashtags and visual style, plus 1-3 **style reference images** used as the visual anchor.
+- **`show-me-how.md`** — the machine config the storybook skills already use (colors, font, backend).
+
+```
+/show-me-how:post spring launch both
+```
+
+It plans one post per platform (Instagram 4:5 · 1080x1350, LinkedIn 1:1 · 1080x1080), draws the focal image in your brand style through the same [backends](#backends), bakes the headline in your font, and leaves a post kit:
+
+```
+docs/show-me-how/spring-launch/
+  01-instagram.webp   02-linkedin.webp
+  captions.md         # one ready-to-paste caption per platform, hashtags included
+  posts.json          # platform, aspect, image, headline, caption, hashtags, cta, altText
+```
+
+Nothing is posted automatically and nothing is committed. The default `docs/show-me-how/` folder is gitignored, so set `docs:` in `show-me-how.md` to a tracked folder (e.g. `social/`) if you want the kits in version control.
 
 ## How it works
 
