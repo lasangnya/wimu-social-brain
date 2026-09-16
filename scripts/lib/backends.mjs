@@ -1,5 +1,6 @@
 import { mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
+import { normalizeAspect } from './aspect.mjs';
 import * as codex from './backends/codex.mjs';
 import * as gemini from './backends/gemini.mjs';
 import * as openai from './backends/openai.mjs';
@@ -103,15 +104,18 @@ export function detectBackend({ pinned = 'auto', model = '', quality = 'medium',
   return { name: 'manual', note: `manual (${reasons.join('; ')}). Run /show-me-how:init to set up automatic images.` };
 }
 
-export async function generate({ backend, prompt, refs = [], out, cwd = process.cwd(), run, codexModel = '', codexReasoning = 'low', imageModel = '', imageApiQuality = 'medium', env = process.env, fetch }) {
+export async function generate({ backend, prompt, refs = [], out, cwd = process.cwd(), aspect, run, codexModel = '', codexReasoning = 'low', imageModel = '', imageApiQuality = 'medium', env = process.env, fetch }) {
   out = resolve(cwd, out);
   mkdirSync(dirname(out), { recursive: true });
+  // Validate the ratio here, once, for every backend: an unknown value should fail before a slow
+  // generation (and before a manual write), the same way an unknown image_model fails at detect.
+  const ratio = normalizeAspect(aspect);
   const b = BACKENDS[backend];
   if (!b) throw new Error(`Unknown backend ${backend}`);
   if (backend in MODELS) {
     const model = resolveModel(backend, imageModel);
-    const r = await b.generate({ prompt, refs, out, cwd, model, quality: imageApiQuality, env, fetch });
+    const r = await b.generate({ prompt, refs, out, cwd, model, quality: imageApiQuality, aspect: ratio, env, fetch });
     return { ...r, estimatedUsd: estimateUsd(backend, model, imageApiQuality) };
   }
-  return b.generate({ prompt, refs, out, cwd, run, codexModel, codexReasoning });
+  return b.generate({ prompt, refs, out, cwd, run, codexModel, codexReasoning, aspect: ratio });
 }

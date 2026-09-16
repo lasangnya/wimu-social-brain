@@ -1,6 +1,7 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
+import { DEFAULT_ASPECT, aspectPhrase } from '../aspect.mjs';
 
 const isWin = process.platform === 'win32';
 
@@ -110,7 +111,7 @@ const ENABLE_IMAGE_TOOL = ['--enable', 'image_generation'];
 // config error mid-run, after the user has already waited on a generation, so reject it up front.
 const REASONING_EFFORTS = ['minimal', 'low', 'medium', 'high'];
 
-export function buildCodexArgs({ prompt, refs = [], out, cwd, codexModel = '', codexReasoning = 'low' }) {
+export function buildCodexArgs({ prompt, refs = [], out, cwd, codexModel = '', codexReasoning = 'low', aspect = DEFAULT_ASPECT }) {
   // `-C` sets codex's working directory, and `-s workspace-write` grants write access to that whole
   // tree. Handing it the repo root would let a drawing run modify any file in the user's repo, so
   // the sandbox is scoped to the shot's own output folder -- the only place this run should write.
@@ -140,7 +141,7 @@ export function buildCodexArgs({ prompt, refs = [], out, cwd, codexModel = '', c
     `Use the $imagegen skill to generate exactly ONE image with its built-in image_gen tool. ` +
     `The image_gen tool takes no destination argument. It reports the path it wrote (under the codex ` +
     `home, e.g. ~/.codex/generated_images/); copy that file to exactly this path: "${absOut}" ` +
-    `(create parent folders if needed), then report that path. Landscape 16:9. ` +
+    `(create parent folders if needed), then report that path. ${aspectPhrase(aspect)}. ` +
     (absRefs.length ? `The attached image(s) are style references for the mascot character -- reference role, not edit targets. ` : '') +
     `Do not use the scripts/image_gen.py CLI fallback. Do not substitute SVG, HTML/CSS, canvas, ` +
     `Python/PIL or any other code-drawn placeholder art; if image_gen is unavailable, stop and say so. ` +
@@ -176,8 +177,8 @@ export function detect({ which = defaultWhich, probe = defaultProbe, env = proce
   return { ready: true, note: `codex ${p.version} (ChatGPT subscription)`, problems: [] };
 }
 
-export async function generate({ prompt, refs = [], out, cwd, run = defaultRun, codexModel = '', codexReasoning = 'low' }) {
-  const r = await run('codex', buildCodexArgs({ prompt, refs, out, cwd, codexModel, codexReasoning }), { cwd });
+export async function generate({ prompt, refs = [], out, cwd, run = defaultRun, codexModel = '', codexReasoning = 'low', aspect = DEFAULT_ASPECT }) {
+  const r = await run('codex', buildCodexArgs({ prompt, refs, out, cwd, codexModel, codexReasoning, aspect }), { cwd });
   const ok = r.code === 0 && existsSync(out);
   return { ok, backend: name, out, stderr: ok ? undefined : (r.stderr || r.stdout).slice(-2000) };
 }
