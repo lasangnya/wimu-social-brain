@@ -23,7 +23,7 @@ Like someone who has long worked on AI, product, design and dev tools, casually 
 - `warn`: key annotations, problems, emotional points, key reminders, results.
 - `note`: supplementary notes, in-head state, system state, second-layer explanation, AI/assistant/automation hints.
 
-Colors and their hex values come from `show-me-how.md`. `note` is not required in every image. Be restrained with color; fewer is better.
+Colors and their hex values come from `wimu-social-brain.md`. `note` is not required in every image. Be restrained with color; fewer is better.
 
 ## Absolutely not
 

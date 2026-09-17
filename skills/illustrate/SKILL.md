@@ -1,6 +1,6 @@
 ---
 name: illustrate
-description: Engine for show-me-how. Plans as many mascot panels as the story needs (typically 3-6, max 8) for a brief as a short storybook, generates them in parallel via an image backend, overlays labels in the brand font, and writes one doc with the panels in sequence. Invoked by /show-me-how:explain, /show-me-how:write-doc and /show-me-how:pr-review; also usable when the user asks to "illustrate", "draw how X works", or "make an explainer image".
+description: Illustration engine. Plans as many mascot panels as the story needs (typically 3-6, max 8) for a brief as a short storybook, generates them in parallel via an image backend, overlays labels in the brand font, and writes one doc with the panels in sequence. Usable when the user asks to "illustrate", "draw how X works", or "make an explainer image"; also draws the test image in /wimu-social-brain:init.
 ---
 
 # illustrate
@@ -20,7 +20,7 @@ If you were not given one, build it first: read the files the user points at, wr
 
 `MODE` changes only one thing: `explain` echoes the finished doc in chat (step 6); `doc` prints its path. Both always save the file.
 
-Read once, before drawing: `references/style-dna.md`, `references/composition-patterns.md`, `references/prompt-template.md`. Read `references/qa-checklist.md` after the first image lands. Read `references/mascot-flow.md` only if `show-me-how.md` has no `## Mascot` section. Read `references/backends.md` whenever a generate call returns `ok:false`.
+Read once, before drawing: `references/style-dna.md`, `references/composition-patterns.md`, `references/prompt-template.md`. Read `references/qa-checklist.md` after the first image lands. Read `references/mascot-flow.md` only if `wimu-social-brain.md` has no `## Mascot` section. Read `references/backends.md` whenever a generate call returns `ok:false`.
 
 `REPO` below is the absolute path of the git root (`git rev-parse --show-toplevel`). Run every command from there. Never stop the run because one panel failed — mark it pending and keep going.
 
@@ -30,12 +30,12 @@ Read once, before drawing: `references/style-dna.md`, `references/composition-pa
 
 Before any script call below: if `$PLUGIN/node_modules/sharp` is missing, run `npm install --silent` with cwd `$PLUGIN` first.
 
-1. `node "$PLUGIN/scripts/design.mjs" "REPO"` -> JSON (`file`, `mascot`, `font`, `colors`, `tone`, `output.docs`, `output.backend`, `output.imageFormat`). `EXT` = `output.imageFormat` (`webp` by default; `png` if the user set it). If `file` is `null`, say once: "No show-me-how.md found; using Flow + Caveat defaults. Run /show-me-how:init to customize." Trust `file`, not the disk: a repo's own unrelated `design.md` is not our config.
-2. `node "$PLUGIN/scripts/backend.mjs" detect --cwd "REPO"` -> prints `backend: ...`. Echo that line to the user verbatim; it already carries the install / login hint when codex is missing, outdated or signed out, so do not add advice of your own. If the line contains `running inside the Codex sandbox` (pinned or not), that is expected inside Codex: continue, and draw with the native image tool in step 3a.3(a). If the command errors instead of printing `backend:`, show the error; it means `show-me-how.md` pins a backend that is not usable (codex not installed / too old / signed out, an API key variable not set, or an unknown `image_model`). Show the error, ask them to fix it or set `backend: auto`, then stop.
+1. `node "$PLUGIN/scripts/design.mjs" "REPO"` -> JSON (`file`, `mascot`, `font`, `colors`, `tone`, `output.docs`, `output.backend`, `output.imageFormat`). `EXT` = `output.imageFormat` (`webp` by default; `png` if the user set it). If `file` is `null`, say once: "No wimu-social-brain.md found; using Flow + Caveat defaults. Run /wimu-social-brain:init to customize." Trust `file`, not the disk: a repo's own unrelated `design.md` is not our config.
+2. `node "$PLUGIN/scripts/backend.mjs" detect --cwd "REPO"` -> prints `backend: ...`. Echo that line to the user verbatim; it already carries the install / login hint when codex is missing, outdated or signed out, so do not add advice of your own. If the line contains `running inside the Codex sandbox` (pinned or not), that is expected inside Codex: continue, and draw with the native image tool in step 3a.3(a). If the command errors instead of printing `backend:`, show the error; it means `wimu-social-brain.md` pins a backend that is not usable (codex not installed / too old / signed out, an API key variable not set, or an unknown `image_model`). Show the error, ask them to fix it or set `backend: auto`, then stop.
 3. `node "$PLUGIN/scripts/slug.mjs" "<TOPIC>"` -> `SLUG`.
-   - `DIR` = `<design.output.docs>` joined with `SLUG` with exactly one `/` between them (`output.docs` may end in `/`) (e.g. `docs/show-me-how/label-overlay`), or `OUTDIR` if the brief block has one.
-   - `DOC` = `DIR/SLUG.md` (e.g. `docs/show-me-how/label-overlay/label-overlay.md`).
-   - `SCRATCH` = `REPO/.show-me-how/SLUG`. Create `DIR` and `SCRATCH` (`mkdir -p`).
+   - `DIR` = `<design.output.docs>` joined with `SLUG` with exactly one `/` between them (`output.docs` may end in `/`) (e.g. `docs/wimu-social-brain/label-overlay`), or `OUTDIR` if the brief block has one.
+   - `DOC` = `DIR/SLUG.md` (e.g. `docs/wimu-social-brain/label-overlay/label-overlay.md`).
+   - `SCRATCH` = `REPO/.wimu-social-brain/SLUG`. Create `DIR` and `SCRATCH` (`mkdir -p`).
 4. Mascot refs: `design.mascot.references` (repo-root-relative) if non-empty, else `$PLUGIN/assets/flow/front.png`, `.../working.png`, `.../stuck.png`. Drop any path that does not exist; if none exist, pass no `--ref` at all — the character still comes from the prompt text.
 
 ## 1. Beats
@@ -94,7 +94,7 @@ Handle each result as its shell exits; do not wait for all of them before starti
    { "labels": [{ "text": "", "x": 0.0, "y": 0.0, "kind": "black" }],
      "arrows": [{ "from": [0.0, 0.0], "to": [0.0, 0.0], "kind": "flow" }] }
    ```
-   `x`/`y` are 0-1 fractions of width/height, placed in empty space next to the object they describe. The canvas is about 1672x941 and a label is centred on its `x`/`y`, so keep every centre within x 0.12-0.88 and y 0.08-0.94. `kind`: `black` (names), `flow` (movement), `warn` (the gotcha or result), `note` (side info). Max 5 labels, 2 arrows. Omit `colors`/`font` — the script fills them from `show-me-how.md`.
+   `x`/`y` are 0-1 fractions of width/height, placed in empty space next to the object they describe. The canvas is about 1672x941 and a label is centred on its `x`/`y`, so keep every centre within x 0.12-0.88 and y 0.08-0.94. `kind`: `black` (names), `flow` (movement), `warn` (the gotcha or result), `note` (side info). Max 5 labels, 2 arrows. Omit `colors`/`font` — the script fills them from `wimu-social-brain.md`.
 2. Overlay:
    ```
    node "$PLUGIN/scripts/label.mjs" --in "SCRATCH/NN.png" --labels "SCRATCH/NN.labels.json" --caption "<caption>" --out "DIR/NN.EXT" --design-cwd "REPO"
@@ -134,12 +134,12 @@ Only after every panel is either labelled or pending. Write `DOC` exactly in thi
 
 Word budget: caption <=12 words, text <=40 words per panel; hook + Remember <=60 words together. Every panel gets a caption and a text — an image alone is not a beat. Plain language, no jargon dumps. Image links are relative to `DIR`, so no folder prefix, and use the real extension (`01.webp` by default).
 
-For a pending panel, write `![<title> — pending](<REL>/.show-me-how/SLUG/NN.png)` where `<REL>` is one `..` per path segment of `DIR` relative to `REPO` (default `docs/show-me-how/<slug>` → `../../..`), followed by one line: `_Pending: prompt at <prompt file>._`
+For a pending panel, write `![<title> — pending](<REL>/.wimu-social-brain/SLUG/NN.png)` where `<REL>` is one `..` per path segment of `DIR` relative to `REPO` (default `docs/wimu-social-brain/<slug>` → `../../..`), followed by one line: `_Pending: prompt at <prompt file>._`
 
 ## 6. Export, clean up, finish
 
 0. Export a shareable copy: `node "$PLUGIN/scripts/export.mjs" --doc "DOC"` writes `DIR/SLUG.html` with every panel inlined, so the storybook can be sent as one file and opened in any browser. Run it after every write of `DOC`, including re-runs.
-1. If **no** panel is pending: delete `SCRATCH` (only `REPO/.show-me-how/SLUG`, never `.show-me-how` itself). If deleting fails, say so in one line and continue. If any panel is pending, keep `SCRATCH` and say it is kept for the re-run.
+1. If **no** panel is pending: delete `SCRATCH` (only `REPO/.wimu-social-brain/SLUG`, never `.wimu-social-brain` itself). If deleting fails, say so in one line and continue. If any panel is pending, keep `SCRATCH` and say it is kept for the re-run.
 2. `DIR` must now contain only `SLUG.md`, `SLUG.html` and `NN.EXT` files. List it. Delete only leftovers this plugin itself produces — `NN-*.png`, `NN-*.svg`, `README.md`, and a `raw/` folder from a v0.1 run. Anything else (other files, other folders) is the user's: leave it and tell them it is there.
 3. `MODE=explain`: print the full contents of `DOC` in chat. `MODE=doc`: do not.
-4. Print exactly: how many panels were produced, which backend was used (`image_gen (native)` for 3a.3a) and, when any result carried `usd` or `estimatedUsd`, the sum as `~$X.XX` (say `charged` when every panel had `usd`, else `estimated, approx. list prices 2026-08`), the path to `DOC` and to `SLUG.html` ("send this one to share"), and which panel numbers are pending with each one's prompt file — or "none pending". Then suggest, without editing anything: "Add `.show-me-how/` to your `.gitignore` to keep prompts and unlabelled generations out of the repo." Do not commit anything.
+4. Print exactly: how many panels were produced, which backend was used (`image_gen (native)` for 3a.3a) and, when any result carried `usd` or `estimatedUsd`, the sum as `~$X.XX` (say `charged` when every panel had `usd`, else `estimated, approx. list prices 2026-08`), the path to `DOC` and to `SLUG.html` ("send this one to share"), and which panel numbers are pending with each one's prompt file — or "none pending". Then suggest, without editing anything: "Add `.wimu-social-brain/` to your `.gitignore` to keep prompts and unlabelled generations out of the repo." Do not commit anything.

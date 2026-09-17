@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { basename, dirname, extname, join, resolve } from 'node:path';
 
-// Renders a show-me-how storybook (the markdown shape illustrate writes) as one
+// Renders a wimu-social-brain storybook (the markdown shape illustrate writes) as one
 // self-contained HTML file: every panel image is inlined as a data URI, so the
 // file can be mailed or zipped on its own and opens in any browser.
 //

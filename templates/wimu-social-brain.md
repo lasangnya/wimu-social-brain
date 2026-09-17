@@ -1,4 +1,4 @@
-# show-me-how design
+# wimu-social-brain design
 # Edit any line. Delete a line to fall back to the default. Comments start with #.
 
 ## Mascot
@@ -23,7 +23,7 @@ note: "#1A73E8"    # side notes, system state
 deadpan, absurd, clean
 
 ## Output
-docs: docs/show-me-how/
+docs: docs/wimu-social-brain/
 backend: auto      # auto | codex | gemini-api | openai-api | openrouter | manual
 codex_model:       # codex model for image generation; empty = codex's own default
 codex_reasoning: low   # codex reasoning effort: minimal | low | medium | high

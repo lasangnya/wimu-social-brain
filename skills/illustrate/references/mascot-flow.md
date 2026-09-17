@@ -1,6 +1,6 @@
 # Flow (default mascot)
 
-Flow is the default character when a repo has no `show-me-how.md` mascot. If `show-me-how.md` defines a mascot, use that sheet instead and treat this file as an example of how a sheet should read.
+Flow is the default character when a repo has no `wimu-social-brain.md` mascot. If `wimu-social-brain.md` defines a mascot, use that sheet instead and treat this file as an example of how a sheet should read.
 
 ## Appearance
 - Small solid-black blob, slightly irregular hand-drawn outline.

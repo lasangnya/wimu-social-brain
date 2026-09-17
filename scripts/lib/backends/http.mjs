@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { extname, resolve } from 'node:path';
+import { DEFAULT_ASPECT, aspectPhrase } from '../aspect.mjs';
 
 const MIME = { '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp' };
 
@@ -10,9 +11,11 @@ export function refsToParts(refs = [], cwd = process.cwd()) {
   });
 }
 
-// Same wording codex gets, so a mascot reference is treated as a style anchor, not an edit target.
-export function referencePreamble(refCount) {
-  return (refCount ? 'The attached image(s) are style references for the mascot character -- reference role, not edit targets. ' : '') + 'Landscape 16:9. ';
+// Same wording codex gets, so a reference is treated as a style anchor, not an edit target.
+// `aspect` defaults to 16:9, which is what every pre-social caller asks for; the social post
+// skill passes 1:1 / 4:5 instead.
+export function referencePreamble(refCount, aspect = DEFAULT_ASPECT) {
+  return (refCount ? 'The attached image(s) are style references for the mascot character -- reference role, not edit targets. ' : '') + `${aspectPhrase(aspect)}. `;
 }
 
 export function httpFailure(status, bodyText = '', keyVar = '') {

@@ -1,11 +1,12 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { fetchWithTimeout, refsToParts, httpFailure, referencePreamble } from './http.mjs';
+import { DEFAULT_ASPECT, normalizeAspect } from '../aspect.mjs';
 
 export const name = 'openrouter';
 export const KEY_VAR = 'OPENROUTER_API_KEY';
 // OpenRouter's dedicated image endpoint (not chat/completions): one JSON shape for every vendor,
-// references as data URLs, 16:9 supported, and the response carries the real `usage.cost`.
+// references as data URLs, and the response carries the real `usage.cost`.
 // Model catalogue: GET https://openrouter.ai/api/v1/images/models
 export const ENDPOINT = 'https://openrouter.ai/api/v1/images';
 
@@ -16,23 +17,23 @@ export function detect({ env = process.env } = {}) {
   return { ready: true, note: '', problems: [] };
 }
 
-export function buildOpenRouterRequest({ prompt, parts, model, apiKey }) {
-  const body = { model, prompt: referencePreamble(parts.length) + prompt, aspect_ratio: '16:9', resolution: '1K', n: 1 };
+export function buildOpenRouterRequest({ prompt, parts, model, apiKey, aspect = DEFAULT_ASPECT }) {
+  const body = { model, prompt: referencePreamble(parts.length, aspect) + prompt, aspect_ratio: normalizeAspect(aspect), resolution: '1K', n: 1 };
   if (parts.length) body.input_references = parts.map((p) => ({ type: 'image_url', image_url: { url: `data:${p.mime};base64,${p.data}` } }));
   return {
     url: ENDPOINT,
     init: {
       method: 'POST',
-      headers: { Authorization: `Bearer ${apiKey}`, 'content-type': 'application/json', 'HTTP-Referer': 'https://github.com/ShahriarBijoy/show-me-how', 'X-Title': 'show-me-how' },
+      headers: { Authorization: `Bearer ${apiKey}`, 'content-type': 'application/json', 'HTTP-Referer': 'https://github.com/lasangnya/wimu-social-brain', 'X-Title': 'wimu-social-brain' },
       body: JSON.stringify(body),
     },
   };
 }
 
-export async function generate({ prompt, refs = [], out, cwd, model, env = process.env, fetch = globalThis.fetch, timeoutMs = 120_000 }) {
+export async function generate({ prompt, refs = [], out, cwd, model, aspect = DEFAULT_ASPECT, env = process.env, fetch = globalThis.fetch, timeoutMs = 120_000 }) {
   const fail = (stderr) => ({ ok: false, backend: name, out, stderr });
   try {
-    const { url, init } = buildOpenRouterRequest({ prompt, parts: refsToParts(refs, cwd), model, apiKey: env[KEY_VAR] });
+    const { url, init } = buildOpenRouterRequest({ prompt, parts: refsToParts(refs, cwd), model, aspect, apiKey: env[KEY_VAR] });
     const res = await fetchWithTimeout(fetch, url, init, timeoutMs);
     if (!res.ok) return fail(httpFailure(res.status, await res.text(), KEY_VAR));
     const json = await res.json();
