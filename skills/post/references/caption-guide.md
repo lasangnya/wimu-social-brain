@@ -22,6 +22,10 @@ Write to one person from the brand.md audience, in the brand.md voice — the ex
 - Emoji policy: sparing — 0-2 per post, only where a plain word would do the same job (e.g. an arrow → for a pointer). When in doubt, none.
 - Hashtags: 3-5, professional and topic-relevant; brand tags first.
 
+## Carousels
+
+One caption for the whole carousel — Instagram and LinkedIn carousels have a single caption, never one per slide. The caption still runs hook -> value -> CTA: its hook must match slide 1 (the only slide guaranteed to be seen) and its CTA should match the last slide. The per-slide headlines are listed by the skill in `captions.md` for reference; they are not separate captions.
+
 ## Alt text
 
 One or two sentences: what the image shows plus the point it makes. Describe the focal action, name the mascot if there is one, and include the baked headline verbatim. Never start with "image of".
